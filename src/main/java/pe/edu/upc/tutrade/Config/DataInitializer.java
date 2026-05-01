@@ -25,12 +25,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.findByEmailUser("biney-debug@trade.com").isEmpty()) {
+        if (userRepository.findByEmailUser("biney-debug@tutrade.com").isEmpty()) {
             Role adminRole = roleRepository.findByNameRole("ADMIN")
                     .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
 
             User admin = new User();
-            admin.setEmailUser("biney-debug@trade.com");
+            admin.setEmailUser("biney-debug@tutrade.com");
             admin.setPassword_hashUser(passwordEncoder.encode("biney"));
             admin.setUsernameUser("biney-debug");
             admin.setIs_premiumUser(true);
