@@ -172,6 +172,24 @@ Reglas:
 - No se puede valorar dos veces en el mismo trade
 - `score`: entero entre 1 y 5
 
+### Chat y mensajes
+
+| Método | Ruta | Acceso | Descripción |
+|---|---|---|---|
+| GET | `/chats/trade/{tradeId}` | Participante o ADMIN | Obtener el chat de un trade |
+| GET | `/chats` | ADMIN | Listar todos los chats |
+| GET | `/chats/{chatId}/messages` | Participante o ADMIN | Listar mensajes del chat (orden cronológico) |
+| POST | `/messages` | Participante del trade | Enviar un mensaje |
+| PUT | `/messages/{messageId}/read` | Receptor del mensaje | Marcar mensaje como leído |
+
+Reglas:
+- El chat se crea automáticamente al crear el trade
+- Solo proposer y receiver pueden ver y escribir en el chat (ADMIN puede leer cualquier conversación)
+- El sender se deduce del JWT — nunca se envía en el body
+- `statusMessage`: `SENT` → `READ`
+- Solo el receptor puede marcar un mensaje como leído (no el propio emisor)
+- El `chatId` aparece embebido en el response de `/trades` para evitar una petición extra
+
 ### Roles
 
 | Método | Ruta | Acceso | Descripción |
@@ -222,7 +240,9 @@ Trade
  ├── Trade_Item (side 1 = proposer, side 2 = receiver)
  │     └── Item
  ├── Rating (valoraciones generadas tras ACCEPTED)
- └── MeetingPoint (punto de encuentro pactado, uno por trade)
+ ├── MeetingPoint (punto de encuentro pactado, uno por trade)
+ └── Chat (creado automáticamente con el trade)
+       └── Message (mensajes del chat)
 
 Category (jerarquía con parent_idCategory)
  └── Item
@@ -240,6 +260,7 @@ src/main/java/pe/edu/upc/tutrade/
 ├── Controllers/
 │   ├── AuthController.java
 │   ├── CategoryController.java
+│   ├── ChatController.java
 │   ├── ItemController.java
 │   ├── MeetingPointController.java
 │   ├── RatingController.java
@@ -247,12 +268,15 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── TradeController.java
 │   └── UserController.java
 ├── DTOs/
+│   ├── ChatResponseDTO.java
 │   ├── ItemRequestDTO.java
 │   ├── ItemResponseDTO.java
 │   ├── LoginRequest.java
 │   ├── LoginResponse.java
 │   ├── MeetingPointRequestDTO.java
 │   ├── MeetingPointResponseDTO.java
+│   ├── MessageRequestDTO.java
+│   ├── MessageResponseDTO.java
 │   ├── RatingRequestDTO.java
 │   ├── RatingResponseDTO.java
 │   ├── TradeRequestDTO.java
@@ -272,8 +296,10 @@ src/main/java/pe/edu/upc/tutrade/
 │   └── User.java
 ├── Repositories/
 │   ├── ICategoryRepository.java
+│   ├── IChatRepository.java
 │   ├── IItemRepository.java
 │   ├── IMeetingPointRepository.java
+│   ├── IMessageRepository.java
 │   ├── IRatingRepository.java
 │   ├── IRoleRepository.java
 │   ├── ITradeItemRepository.java
@@ -286,6 +312,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   └── UserDetailsServiceImpl.java
 ├── ServicesInterfaces/
 │   ├── ICategoryService.java
+│   ├── IChatService.java
 │   ├── IItemService.java
 │   ├── IMeetingPointService.java
 │   ├── IRatingService.java
@@ -294,6 +321,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   └── IUserService.java
 ├── ServicesImplements/
 │   ├── CategoryServiceImplement.java
+│   ├── ChatServiceImplement.java
 │   ├── ItemServiceImplement.java
 │   ├── MeetingPointServiceImplement.java
 │   ├── RatingServiceImplement.java
@@ -309,7 +337,6 @@ src/main/java/pe/edu/upc/tutrade/
 
 | Feature | Descripción |
 |---|---|
-| Chat | Mensajería dentro de un trade |
 | Perfiles | Información adicional del usuario |
 
-Las entidades para estas features ya existen. Falta implementar servicio y controlador.
+La entidad `Profile` ya existe. Falta implementar servicio y controlador.
