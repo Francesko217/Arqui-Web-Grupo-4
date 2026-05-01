@@ -1,18 +1,26 @@
 package pe.edu.upc.tutrade.ServicesImplements;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pe.edu.upc.tutrade.DTOs.ItemResponseDTO;
 import pe.edu.upc.tutrade.DTOs.ItemRequestDTO;
+import pe.edu.upc.tutrade.DTOs.UserResponseDTO;
 import pe.edu.upc.tutrade.Entities.Category;
 import pe.edu.upc.tutrade.Entities.Item;
+import pe.edu.upc.tutrade.Entities.Profile;
 import pe.edu.upc.tutrade.Entities.User;
 import pe.edu.upc.tutrade.Repositories.ICategoryRepository;
 import pe.edu.upc.tutrade.Repositories.IItemRepository;
+import pe.edu.upc.tutrade.Repositories.IProfileRepository;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
 import pe.edu.upc.tutrade.ServicesInterfaces.IItemService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImplement implements IItemService {
@@ -25,6 +33,39 @@ public class ItemServiceImplement implements IItemService {
 
     @Autowired
     private ICategoryRepository cR;
+
+    @Autowired
+    private IProfileRepository profileRepo;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    // Builds a profileId→ProfileResponseDTO map from a list of items in one query.
+    private Map<Integer, Profile> profileMapFor(List<Item> items) {
+        Set<Integer> userIds = items.stream()
+                .map(i -> i.getUser().getIdUser())
+                .collect(Collectors.toSet());
+        return profileRepo.findAllByUser_IdUserIn(userIds).stream()
+                .collect(Collectors.toMap(p -> p.getUser().getIdUser(), p -> p));
+    }
+
+    private ItemResponseDTO toDTO(Item item, Map<Integer, Profile> profileMap) {
+        ItemResponseDTO dto = modelMapper.map(item, ItemResponseDTO.class);
+        UserResponseDTO userDTO = modelMapper.map(item.getUser(), UserResponseDTO.class);
+        Profile profile = profileMap.get(item.getUser().getIdUser());
+        if (profile != null) {
+            userDTO.setProfile(ProfileServiceImplement.toDTO(profile));
+        }
+        dto.setUser(userDTO);
+        return dto;
+    }
+
+    private List<ItemResponseDTO> toDTOList(List<Item> items) {
+        Map<Integer, Profile> profileMap = profileMapFor(items);
+        return items.stream()
+                .map(item -> toDTO(item, profileMap))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Item insert(ItemRequestDTO dto, String email) {
@@ -108,5 +149,28 @@ public class ItemServiceImplement implements IItemService {
         }
 
         iR.deleteById(id);
+    }
+
+    public List<ItemResponseDTO> listAsDTO() {
+        return toDTOList(iR.findAll());
+    }
+
+    public List<ItemResponseDTO> listByCategoryAsDTO(int categoryId) {
+        return toDTOList(iR.findByCategory_IdCategory(categoryId));
+    }
+
+    public List<ItemResponseDTO> listByStatusAsDTO(int status) {
+        return toDTOList(iR.findByStatusItem(status));
+    }
+
+    public List<ItemResponseDTO> listByUserAsDTO(int userId) {
+        return toDTOList(iR.findByUser_IdUser(userId));
+    }
+
+    public Optional<ItemResponseDTO> listIdAsDTO(int id) {
+        return iR.findById(id).map(item -> {
+            Map<Integer, Profile> profileMap = profileMapFor(List.of(item));
+            return toDTO(item, profileMap);
+        });
     }
 }
