@@ -2,7 +2,7 @@ package pe.edu.upc.tutrade.Entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Message")
@@ -11,26 +11,27 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idMessage;
 
-    @Column(name = "contentMessage",nullable = false)
+    @Column(name = "contentMessage", nullable = false)
     private String contentMessage;
 
-    @Column(name = "statusMessage",nullable = false)
+    @Column(name = "statusMessage", nullable = false)
     private String statusMessage;
 
-    @Column(name="sent-atMessage",nullable = false)
-    private LocalDate sent_atMessage;
-    @ManyToOne
-    @JoinColumn(name="idUser")
-    private User user;
-    @ManyToOne
-    @JoinColumn(name="idChat")
-    private Chat chat;
+    @Column(name = "sent_atMessage", nullable = false)
+    private LocalDateTime sent_atMessage;
 
+    @ManyToOne
+    @JoinColumn(name = "idUser")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "idChat")
+    private Chat chat;
 
     public Message() {
     }
 
-    public Message(int idMessage, Chat chat, String contentMessage, String statusMessage, LocalDate sent_atMessage, User user) {
+    public Message(int idMessage, Chat chat, String contentMessage, String statusMessage, LocalDateTime sent_atMessage, User user) {
         this.idMessage = idMessage;
         this.chat = chat;
         this.contentMessage = contentMessage;
@@ -39,43 +40,21 @@ public class Message {
         this.user = user;
     }
 
-    public int getIdMessage() {
-        return idMessage;
-    }
+    public int getIdMessage() { return idMessage; }
+    public void setIdMessage(int idMessage) { this.idMessage = idMessage; }
 
-    public void setIdMessage(int idMessage) {
-        this.idMessage = idMessage;
-    }
+    public String getContentMessage() { return contentMessage; }
+    public void setContentMessage(String contentMessage) { this.contentMessage = contentMessage; }
 
-    public String getContentMessage() {
-        return contentMessage;
-    }
+    public String getStatusMessage() { return statusMessage; }
+    public void setStatusMessage(String statusMessage) { this.statusMessage = statusMessage; }
 
-    public void setContentMessage(String contentMessage) {
-        this.contentMessage = contentMessage;
-    }
+    public LocalDateTime getSent_atMessage() { return sent_atMessage; }
+    public void setSent_atMessage(LocalDateTime sent_atMessage) { this.sent_atMessage = sent_atMessage; }
 
-    public String getStatusMessage() {
-        return statusMessage;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public LocalDate getSent_atMessage() {
-        return sent_atMessage;
-    }
-
-    public void setSent_atMessage(LocalDate sent_atMessage) {
-        this.sent_atMessage = sent_atMessage;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
+    public Chat getChat() { return chat; }
+    public void setChat(Chat chat) { this.chat = chat; }
 }
