@@ -140,6 +140,21 @@ Estados del ítem: `1` = Disponible, `2` = Pausado, `3` = Intercambiado
 
 Estados del trade: `PENDING` → `ACCEPTED` / `REJECTED` / `CANCELLED`
 
+### Valoraciones (Ratings)
+
+| Método | Ruta | Acceso | Descripción |
+|---|---|---|---|
+| POST | `/ratings` | Autenticado | Valorar al otro participante de un trade ACCEPTED |
+| GET | `/ratings` | ADMIN | Listar todas las valoraciones |
+| GET | `/ratings/user/{userId}` | Público | Valoraciones recibidas por un usuario |
+| GET | `/ratings/trade/{tradeId}` | Partes o ADMIN | Valoraciones de un trade |
+
+Reglas:
+- Solo se puede valorar si el trade está en estado `ACCEPTED`
+- Cada parte valora al otro (proposer → receiver, receiver → proposer)
+- No se puede valorar dos veces en el mismo trade
+- `score`: entero entre 1 y 5
+
 ### Roles
 
 | Método | Ruta | Acceso | Descripción |
@@ -183,11 +198,13 @@ Role
        ├── Item
        ├── Trade (como proposer)
        ├── Trade (como receiver)
+       ├── Rating (como rater — quien valora)
        └── Profile
 
 Trade
- └── Trade_Item (side 1 = proposer, side 2 = receiver)
-       └── Item
+ ├── Trade_Item (side 1 = proposer, side 2 = receiver)
+ │     └── Item
+ └── Rating (valoraciones generadas tras ACCEPTED)
 
 Category (jerarquía con parent_idCategory)
  └── Item
@@ -206,6 +223,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── AuthController.java
 │   ├── CategoryController.java
 │   ├── ItemController.java
+│   ├── RatingController.java
 │   ├── RoleController.java
 │   ├── TradeController.java
 │   └── UserController.java
@@ -214,6 +232,8 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── ItemResponseDTO.java
 │   ├── LoginRequest.java
 │   ├── LoginResponse.java
+│   ├── RatingRequestDTO.java
+│   ├── RatingResponseDTO.java
 │   ├── TradeRequestDTO.java
 │   ├── TradeResponseDTO.java
 │   └── UserResponseDTO.java
@@ -232,6 +252,7 @@ src/main/java/pe/edu/upc/tutrade/
 ├── Repositories/
 │   ├── ICategoryRepository.java
 │   ├── IItemRepository.java
+│   ├── IRatingRepository.java
 │   ├── IRoleRepository.java
 │   ├── ITradeItemRepository.java
 │   ├── ITradeRepository.java
@@ -244,12 +265,14 @@ src/main/java/pe/edu/upc/tutrade/
 ├── ServicesInterfaces/
 │   ├── ICategoryService.java
 │   ├── IItemService.java
+│   ├── IRatingService.java
 │   ├── IRoleService.java
 │   ├── ITradeService.java
 │   └── IUserService.java
 ├── ServicesImplements/
 │   ├── CategoryServiceImplement.java
 │   ├── ItemServiceImplement.java
+│   ├── RatingServiceImplement.java
 │   ├── RoleServiceImplement.java
 │   ├── TradeServiceImplement.java
 │   └── UserServiceImplement.java
@@ -262,7 +285,6 @@ src/main/java/pe/edu/upc/tutrade/
 
 | Feature | Descripción |
 |---|---|
-| Ratings | Valorar al otro usuario al completar un trade |
 | Meeting points | Coordinar lugar y hora del intercambio |
 | Chat | Mensajería dentro de un trade |
 | Perfiles | Información adicional del usuario |
