@@ -13,6 +13,7 @@ public class UserResponseDTO {
     private LocalDate created_atUser;
     private LocalDate updated_atUser;
     private Role role;
+    private ProfileResponseDTO profile;
 
     public int getIdUser() { return idUser; }
     public void setIdUser(int idUser) { this.idUser = idUser; }
@@ -37,4 +38,7 @@ public class UserResponseDTO {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public ProfileResponseDTO getProfile() { return profile; }
+    public void setProfile(ProfileResponseDTO profile) { this.profile = profile; }
 }

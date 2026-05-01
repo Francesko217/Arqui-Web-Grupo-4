@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.tutrade.DTOs.UserResponseDTO;
 import pe.edu.upc.tutrade.Entities.User;
+import pe.edu.upc.tutrade.Repositories.IProfileRepository;
+import pe.edu.upc.tutrade.ServicesImplements.ProfileServiceImplement;
 import pe.edu.upc.tutrade.ServicesInterfaces.IUserService;
 
 import java.util.List;
@@ -20,7 +22,17 @@ public class UserController {
     private IUserService uS;
 
     @Autowired
+    private IProfileRepository profileRepo;
+
+    @Autowired
     private ModelMapper modelMapper;
+
+    private UserResponseDTO toDTO(User user) {
+        UserResponseDTO dto = modelMapper.map(user, UserResponseDTO.class);
+        profileRepo.findByUser_IdUser(user.getIdUser())
+                .ifPresent(p -> dto.setProfile(ProfileServiceImplement.toDTO(p)));
+        return dto;
+    }
 
     @PostMapping
     public ResponseEntity<?> insertar(@RequestBody User user) {
@@ -44,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> listarId(@PathVariable int id) {
         Optional<User> user = uS.listId(id);
         if (user.isPresent()) {
-            return ResponseEntity.ok(modelMapper.map(user.get(), UserResponseDTO.class));
+            return ResponseEntity.ok(toDTO(user.get()));
         } else {
             return ResponseEntity.status(404).body("Usuario no encontrado");
         }
