@@ -4,14 +4,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.tutrade.DTOs.ItemResponseDTO;
+import pe.edu.upc.tutrade.DTOs.MeetingPointResponseDTO;
 import pe.edu.upc.tutrade.DTOs.TradeRequestDTO;
 import pe.edu.upc.tutrade.DTOs.TradeResponseDTO;
 import pe.edu.upc.tutrade.DTOs.UserResponseDTO;
 import pe.edu.upc.tutrade.Entities.Item;
+import pe.edu.upc.tutrade.Entities.MeetingPoint;
 import pe.edu.upc.tutrade.Entities.Trade;
 import pe.edu.upc.tutrade.Entities.Trade_item;
 import pe.edu.upc.tutrade.Entities.User;
 import pe.edu.upc.tutrade.Repositories.IItemRepository;
+import pe.edu.upc.tutrade.Repositories.IMeetingPointRepository;
 import pe.edu.upc.tutrade.Repositories.ITradeItemRepository;
 import pe.edu.upc.tutrade.Repositories.ITradeRepository;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
@@ -37,7 +40,21 @@ public class TradeServiceImplement implements ITradeService {
     private IItemRepository itemRepo;
 
     @Autowired
+    private IMeetingPointRepository meetingPointRepo;
+
+    @Autowired
     private ModelMapper modelMapper;
+
+    private MeetingPointResponseDTO toMeetingPointDTO(MeetingPoint mp) {
+        MeetingPointResponseDTO dto = new MeetingPointResponseDTO();
+        dto.setIdMeetingPoint(mp.getIdMeetingPoint());
+        dto.setAddress(mp.getAddressMeetingPoint());
+        dto.setLatitude(mp.getLatitudeMeetingPoint());
+        dto.setLongitude(mp.getLongitudeMeetingPoint());
+        dto.setScheduledAt(mp.getScheduledAtMeetingPoint());
+        dto.setTradeId(mp.getTrade().getIdTrade());
+        return dto;
+    }
 
     private TradeResponseDTO toDTO(Trade trade) {
         TradeResponseDTO dto = new TradeResponseDTO();
@@ -57,6 +74,9 @@ public class TradeServiceImplement implements ITradeService {
                 .filter(ti -> ti.getSideTradeItem() == 2)
                 .map(ti -> modelMapper.map(ti.getItem(), ItemResponseDTO.class))
                 .collect(Collectors.toList()));
+
+        meetingPointRepo.findByTrade_IdTrade(trade.getIdTrade())
+                .ifPresent(mp -> dto.setMeetingPoint(toMeetingPointDTO(mp)));
 
         return dto;
     }

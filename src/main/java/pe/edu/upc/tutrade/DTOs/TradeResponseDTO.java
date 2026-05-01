@@ -12,6 +12,7 @@ public class TradeResponseDTO {
     private UserResponseDTO receiver;
     private List<ItemResponseDTO> proposerItems;
     private List<ItemResponseDTO> receiverItems;
+    private MeetingPointResponseDTO meetingPoint;
 
     public int getIdTrade() {
         return idTrade;
@@ -75,5 +76,13 @@ public class TradeResponseDTO {
 
     public void setReceiverItems(List<ItemResponseDTO> receiverItems) {
         this.receiverItems = receiverItems;
+    }
+
+    public MeetingPointResponseDTO getMeetingPoint() {
+        return meetingPoint;
+    }
+
+    public void setMeetingPoint(MeetingPointResponseDTO meetingPoint) {
+        this.meetingPoint = meetingPoint;
     }
 }
