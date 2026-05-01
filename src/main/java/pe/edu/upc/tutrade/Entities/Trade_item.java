@@ -9,22 +9,23 @@ public class Trade_item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idTrade_item;
 
-    @Column(name="sideTrade_item",nullable = false)
-    private int sideTrade_item;
+    @Column(name="sideTrade_item", nullable = false)
+    private int sideTradeItem;
+
     @ManyToOne
     @JoinColumn(name="idItem")
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name ="idTrade")
+    @JoinColumn(name="idTrade")
     private Trade trade;
 
     public Trade_item() {
     }
 
-    public Trade_item(int idTrade_item, int sideTrade_item, Item item, Trade trade) {
+    public Trade_item(int idTrade_item, int sideTradeItem, Item item, Trade trade) {
         this.idTrade_item = idTrade_item;
-        this.sideTrade_item = sideTrade_item;
+        this.sideTradeItem = sideTradeItem;
         this.item = item;
         this.trade = trade;
     }
@@ -37,12 +38,12 @@ public class Trade_item {
         this.idTrade_item = idTrade_item;
     }
 
-    public int getSideTrade_item() {
-        return sideTrade_item;
+    public int getSideTradeItem() {
+        return sideTradeItem;
     }
 
-    public void setSideTrade_item(int sideTrade_item) {
-        this.sideTrade_item = sideTrade_item;
+    public void setSideTradeItem(int sideTradeItem) {
+        this.sideTradeItem = sideTradeItem;
     }
 
     public Item getItem() {
