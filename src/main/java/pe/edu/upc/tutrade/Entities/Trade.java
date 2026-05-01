@@ -16,7 +16,7 @@ public class Trade {
     @Column(name="created_atTrade",nullable = false)
     private LocalDate created_atTrade;
 
-    @Column(name = "completed_atTrade",nullable = false)
+    @Column(name = "completed_atTrade",nullable = true)
     private LocalDate completed_atTrade;
 
     @ManyToOne
@@ -79,11 +79,11 @@ public class Trade {
         this.proposer = proposer;
     }
 
-    public User getReciever() {
+    public User getReceiver() {
         return receiver;
     }
 
-    public void setReciever(User receiver) {
+    public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
 }
