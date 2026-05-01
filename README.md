@@ -140,6 +140,23 @@ Estados del ítem: `1` = Disponible, `2` = Pausado, `3` = Intercambiado
 
 Estados del trade: `PENDING` → `ACCEPTED` / `REJECTED` / `CANCELLED`
 
+### Puntos de encuentro (Meeting Points)
+
+| Método | Ruta | Acceso | Descripción |
+|---|---|---|---|
+| POST | `/meeting-points` | Participante del trade | Proponer lugar y hora |
+| GET | `/meeting-points` | ADMIN | Listar todos |
+| GET | `/meeting-points/trade/{tradeId}` | Participante o ADMIN | Ver el punto de encuentro de un trade |
+| PUT | `/meeting-points/{id}` | Participante del trade | Actualizar lugar u hora |
+| DELETE | `/meeting-points/{id}` | Participante o ADMIN | Eliminar |
+
+Reglas:
+- Solo se puede crear o modificar si el trade está en `PENDING`
+- Solo el proposer, el receiver o un ADMIN pueden eliminar
+- No se puede eliminar si el trade está en `ACCEPTED` (sirve como evidencia histórica)
+- Un trade tiene como máximo un punto de encuentro
+- El objeto `meetingPoint` aparece embebido en el response de `/trades` cuando existe
+
 ### Valoraciones (Ratings)
 
 | Método | Ruta | Acceso | Descripción |
@@ -204,7 +221,8 @@ Role
 Trade
  ├── Trade_Item (side 1 = proposer, side 2 = receiver)
  │     └── Item
- └── Rating (valoraciones generadas tras ACCEPTED)
+ ├── Rating (valoraciones generadas tras ACCEPTED)
+ └── MeetingPoint (punto de encuentro pactado, uno por trade)
 
 Category (jerarquía con parent_idCategory)
  └── Item
@@ -223,6 +241,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── AuthController.java
 │   ├── CategoryController.java
 │   ├── ItemController.java
+│   ├── MeetingPointController.java
 │   ├── RatingController.java
 │   ├── RoleController.java
 │   ├── TradeController.java
@@ -232,6 +251,8 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── ItemResponseDTO.java
 │   ├── LoginRequest.java
 │   ├── LoginResponse.java
+│   ├── MeetingPointRequestDTO.java
+│   ├── MeetingPointResponseDTO.java
 │   ├── RatingRequestDTO.java
 │   ├── RatingResponseDTO.java
 │   ├── TradeRequestDTO.java
@@ -241,7 +262,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── Category.java
 │   ├── Chat.java
 │   ├── Item.java
-│   ├── Meeting_point.java
+│   ├── MeetingPoint.java
 │   ├── Message.java
 │   ├── Profile.java
 │   ├── Rating.java
@@ -252,6 +273,7 @@ src/main/java/pe/edu/upc/tutrade/
 ├── Repositories/
 │   ├── ICategoryRepository.java
 │   ├── IItemRepository.java
+│   ├── IMeetingPointRepository.java
 │   ├── IRatingRepository.java
 │   ├── IRoleRepository.java
 │   ├── ITradeItemRepository.java
@@ -265,6 +287,7 @@ src/main/java/pe/edu/upc/tutrade/
 ├── ServicesInterfaces/
 │   ├── ICategoryService.java
 │   ├── IItemService.java
+│   ├── IMeetingPointService.java
 │   ├── IRatingService.java
 │   ├── IRoleService.java
 │   ├── ITradeService.java
@@ -272,6 +295,7 @@ src/main/java/pe/edu/upc/tutrade/
 ├── ServicesImplements/
 │   ├── CategoryServiceImplement.java
 │   ├── ItemServiceImplement.java
+│   ├── MeetingPointServiceImplement.java
 │   ├── RatingServiceImplement.java
 │   ├── RoleServiceImplement.java
 │   ├── TradeServiceImplement.java
@@ -285,7 +309,6 @@ src/main/java/pe/edu/upc/tutrade/
 
 | Feature | Descripción |
 |---|---|
-| Meeting points | Coordinar lugar y hora del intercambio |
 | Chat | Mensajería dentro de un trade |
 | Perfiles | Información adicional del usuario |
 
