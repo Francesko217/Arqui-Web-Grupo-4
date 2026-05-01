@@ -20,11 +20,11 @@ public class Trade {
     private LocalDate completed_atTrade;
 
     @ManyToOne
-    @JoinColumn(name="idUser")
+    @JoinColumn(name="proposer_id")
     private User proposer;
 
     @ManyToOne
-    @JoinColumn(name="idUser")
+    @JoinColumn(name="receiver_id")
     private User reciever;
 
     public Trade() {
