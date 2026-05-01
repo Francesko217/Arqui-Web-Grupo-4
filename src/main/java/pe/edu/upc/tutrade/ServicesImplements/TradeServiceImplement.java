@@ -13,6 +13,8 @@ import pe.edu.upc.tutrade.Entities.MeetingPoint;
 import pe.edu.upc.tutrade.Entities.Trade;
 import pe.edu.upc.tutrade.Entities.Trade_item;
 import pe.edu.upc.tutrade.Entities.User;
+import pe.edu.upc.tutrade.Entities.Chat;
+import pe.edu.upc.tutrade.Repositories.IChatRepository;
 import pe.edu.upc.tutrade.Repositories.IItemRepository;
 import pe.edu.upc.tutrade.Repositories.IMeetingPointRepository;
 import pe.edu.upc.tutrade.Repositories.ITradeItemRepository;
@@ -41,6 +43,9 @@ public class TradeServiceImplement implements ITradeService {
 
     @Autowired
     private IMeetingPointRepository meetingPointRepo;
+
+    @Autowired
+    private IChatRepository chatRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -77,6 +82,9 @@ public class TradeServiceImplement implements ITradeService {
 
         meetingPointRepo.findByTrade_IdTrade(trade.getIdTrade())
                 .ifPresent(mp -> dto.setMeetingPoint(toMeetingPointDTO(mp)));
+
+        chatRepo.findByTrade_IdTrade(trade.getIdTrade())
+                .ifPresent(chat -> dto.setChatId(chat.getIdChat()));
 
         return dto;
     }
@@ -146,6 +154,13 @@ public class TradeServiceImplement implements ITradeService {
             ti.setSideTradeItem(2);
             tradeItemRepo.save(ti);
         }
+
+        Chat chat = new Chat();
+        chat.setTrade(trade);
+        chat.setUser(proposer);
+        chat.setUser_b_idChat(receiver.getIdUser());
+        chat.setCreated_atChat(LocalDate.now());
+        chatRepo.save(chat);
 
         return toDTO(trade);
     }
