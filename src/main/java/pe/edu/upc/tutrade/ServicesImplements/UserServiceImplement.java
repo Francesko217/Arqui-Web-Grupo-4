@@ -1,6 +1,7 @@
 package pe.edu.upc.tutrade.ServicesImplements;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.tutrade.Entities.User;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
@@ -15,12 +16,16 @@ public class UserServiceImplement implements IUserService {
     @Autowired
     private IUserRepository uR;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User insert(User user) {
         Optional<User> existente = uR.findByEmailUser(user.getEmailUser());
         if (existente.isPresent()) {
             throw new RuntimeException("Email ya registrado");
         }
+        user.setPassword_hashUser(passwordEncoder.encode(user.getPassword_hashUser()));
         user.setIs_premiumUser(false);
         user.setIs_verifiedUser(false);
         user.setCreated_atUser(LocalDate.now());
