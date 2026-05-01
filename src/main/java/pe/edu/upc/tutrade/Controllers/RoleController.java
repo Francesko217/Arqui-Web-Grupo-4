@@ -2,6 +2,7 @@ package pe.edu.upc.tutrade.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.tutrade.Entities.Role;
 import pe.edu.upc.tutrade.ServicesInterfaces.IRoleService;
@@ -15,6 +16,7 @@ public class RoleController {
     @Autowired
     private IRoleService rS;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> insertar(@RequestBody Role role) {
         try {
@@ -25,11 +27,13 @@ public class RoleController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Role>> listar() {
         return ResponseEntity.ok(rS.list());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> listarId(@PathVariable int id) {
         Optional<Role> role = rS.listId(id);
@@ -40,6 +44,7 @@ public class RoleController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable int id, @RequestBody Role role) {
         try {
@@ -50,6 +55,7 @@ public class RoleController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable int id) {
         Optional<Role> role = rS.listId(id);
