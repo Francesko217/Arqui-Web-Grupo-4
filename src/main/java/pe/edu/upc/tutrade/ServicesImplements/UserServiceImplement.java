@@ -3,7 +3,9 @@ package pe.edu.upc.tutrade.ServicesImplements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pe.edu.upc.tutrade.Entities.Role;
 import pe.edu.upc.tutrade.Entities.User;
+import pe.edu.upc.tutrade.Repositories.IRoleRepository;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
 import pe.edu.upc.tutrade.ServicesInterfaces.IUserService;
 
@@ -13,19 +15,26 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImplement implements IUserService {
+
     @Autowired
     private IUserRepository uR;
+
+    @Autowired
+    private IRoleRepository rR;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public User insert(User user) {
-        Optional<User> existente = uR.findByEmailUser(user.getEmailUser());
-        if (existente.isPresent()) {
+        if (uR.findByEmailUser(user.getEmailUser()).isPresent()) {
             throw new RuntimeException("Email ya registrado");
         }
+        Role clientRole = rR.findByNameRole("CLIENT")
+                .orElseThrow(() -> new RuntimeException("Rol CLIENT no encontrado"));
+
         user.setPassword_hashUser(passwordEncoder.encode(user.getPassword_hashUser()));
+        user.setRole(clientRole);
         user.setIs_premiumUser(false);
         user.setIs_verifiedUser(false);
         user.setCreated_atUser(LocalDate.now());
@@ -46,6 +55,5 @@ public class UserServiceImplement implements IUserService {
     @Override
     public void delete(int id) {
         uR.deleteById(id);
-
     }
 }
