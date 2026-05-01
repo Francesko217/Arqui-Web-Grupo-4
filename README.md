@@ -36,7 +36,7 @@ spring.datasource.url=jdbc:postgresql://localhost/bdTuTrade
 spring.datasource.username=postgres
 spring.datasource.password=<tu_password>
 
-jwt.secret=tutrade-clave-secreta-muy-segura-2024-upc
+jwt.secret=TuTrade#Grupo4@UPC-2024$xK9mP2qLrB7nZ
 jwt.expiration=86400000
 ```
 
