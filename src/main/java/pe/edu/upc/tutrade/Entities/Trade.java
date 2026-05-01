@@ -25,14 +25,14 @@ public class Trade {
 
     @ManyToOne
     @JoinColumn(name="receiver_id")
-    private User reciever;
+    private User receiver;
 
     public Trade() {
     }
 
-    public Trade(int idTrade, User reciever, User proposer, LocalDate completed_atTrade, LocalDate created_atTrade, String statusTrade) {
+    public Trade(int idTrade, User receiver, User proposer, LocalDate completed_atTrade, LocalDate created_atTrade, String statusTrade) {
         this.idTrade = idTrade;
-        this.reciever = reciever;
+        this.receiver = receiver;
         this.proposer = proposer;
         this.completed_atTrade = completed_atTrade;
         this.created_atTrade = created_atTrade;
@@ -80,10 +80,10 @@ public class Trade {
     }
 
     public User getReciever() {
-        return reciever;
+        return receiver;
     }
 
-    public void setReciever(User reciever) {
-        this.reciever = reciever;
+    public void setReciever(User receiver) {
+        this.receiver = receiver;
     }
 }
