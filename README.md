@@ -190,6 +190,24 @@ Reglas:
 - Solo el receptor puede marcar un mensaje como leído (no el propio emisor)
 - El `chatId` aparece embebido en el response de `/trades` para evitar una petición extra
 
+### Perfiles
+
+| Método | Ruta | Acceso | Descripción |
+|---|---|---|---|
+| POST | `/profiles` | CLIENT o ADMIN | Crear perfil (owner = token, uno por usuario) |
+| GET | `/profiles` | ADMIN | Listar todos los perfiles |
+| GET | `/profiles/me` | CLIENT o ADMIN | Ver mi propio perfil |
+| GET | `/profiles/user/{userId}` | CLIENT o ADMIN | Ver perfil de otro usuario |
+| PUT | `/profiles/{id}` | Owner o ADMIN | Actualizar perfil |
+| DELETE | `/profiles/{id}` | Owner o ADMIN | Eliminar perfil |
+
+Reglas:
+- El owner se deduce del JWT al crear — nunca del body
+- Un usuario solo puede tener un perfil (el service valida unicidad)
+- Solo el owner o ADMIN puede actualizar o eliminar
+- El campo `age` en el response se calcula al vuelo desde `birthDate` — no se persiste
+- El objeto `profile` aparece embebido dentro de `user` en los responses de `/users/{id}` e `/items/**`
+
 ### Roles
 
 | Método | Ruta | Acceso | Descripción |
@@ -244,6 +262,9 @@ Trade
  └── Chat (creado automáticamente con el trade)
        └── Message (mensajes del chat)
 
+User
+ └── Profile (uno por usuario, embebido en responses de /users/{id} e /items)
+
 Category (jerarquía con parent_idCategory)
  └── Item
 ```
@@ -263,6 +284,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── ChatController.java
 │   ├── ItemController.java
 │   ├── MeetingPointController.java
+│   ├── ProfileController.java
 │   ├── RatingController.java
 │   ├── RoleController.java
 │   ├── TradeController.java
@@ -277,6 +299,8 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── MeetingPointResponseDTO.java
 │   ├── MessageRequestDTO.java
 │   ├── MessageResponseDTO.java
+│   ├── ProfileRequestDTO.java
+│   ├── ProfileResponseDTO.java
 │   ├── RatingRequestDTO.java
 │   ├── RatingResponseDTO.java
 │   ├── TradeRequestDTO.java
@@ -300,6 +324,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── IItemRepository.java
 │   ├── IMeetingPointRepository.java
 │   ├── IMessageRepository.java
+│   ├── IProfileRepository.java
 │   ├── IRatingRepository.java
 │   ├── IRoleRepository.java
 │   ├── ITradeItemRepository.java
@@ -315,6 +340,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── IChatService.java
 │   ├── IItemService.java
 │   ├── IMeetingPointService.java
+│   ├── IProfileService.java
 │   ├── IRatingService.java
 │   ├── IRoleService.java
 │   ├── ITradeService.java
@@ -324,6 +350,7 @@ src/main/java/pe/edu/upc/tutrade/
 │   ├── ChatServiceImplement.java
 │   ├── ItemServiceImplement.java
 │   ├── MeetingPointServiceImplement.java
+│   ├── ProfileServiceImplement.java
 │   ├── RatingServiceImplement.java
 │   ├── RoleServiceImplement.java
 │   ├── TradeServiceImplement.java
@@ -335,8 +362,4 @@ src/main/java/pe/edu/upc/tutrade/
 
 ## Pendiente
 
-| Feature | Descripción |
-|---|---|
-| Perfiles | Información adicional del usuario |
-
-La entidad `Profile` ya existe. Falta implementar servicio y controlador.
+No hay features pendientes de implementar. Todas las entidades tienen su servicio y controlador completos.
