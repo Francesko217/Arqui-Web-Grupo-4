@@ -14,4 +14,14 @@ public interface ITradeService {
     TradeResponseDTO accept(int id, String email);
     TradeResponseDTO reject(int id, String email);
     TradeResponseDTO cancel(int id, String email);
+
+    // HU39
+    List<TradeResponseDTO> listSentTrades(String email);
+    List<TradeResponseDTO> listReceivedTrades(String email);
+
+    // HU21
+    List<TradeResponseDTO> listByItem(int itemId, String email);
+
+    // HU16
+    List<Object[]> rankingByTradeCount();
 }
