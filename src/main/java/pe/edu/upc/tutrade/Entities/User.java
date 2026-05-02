@@ -3,6 +3,7 @@ package pe.edu.upc.tutrade.Entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Users")
@@ -31,6 +32,12 @@ public class User {
 
     @Column(name="updated_atUser",nullable = false)
     private LocalDate updated_atUser;
+
+    @Column(name="is_enabledUser", nullable = false)
+    private Boolean is_enabledUser = true;
+
+    @Column(name="last_loginUser")
+    private LocalDateTime last_loginUser;
 
     @ManyToOne
     @JoinColumn(name="idRole")
@@ -122,4 +129,10 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public Boolean getIs_enabledUser() { return is_enabledUser; }
+    public void setIs_enabledUser(Boolean is_enabledUser) { this.is_enabledUser = is_enabledUser; }
+
+    public LocalDateTime getLast_loginUser() { return last_loginUser; }
+    public void setLast_loginUser(LocalDateTime last_loginUser) { this.last_loginUser = last_loginUser; }
 }

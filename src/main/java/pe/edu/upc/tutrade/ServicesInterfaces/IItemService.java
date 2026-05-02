@@ -15,4 +15,11 @@ public interface IItemService {
     Optional<Item> listId(int id);
     Item update(int id, ItemRequestDTO dto, String email);
     void delete(int id, String email);
+
+    // HU15
+    Item pause(int id, String email);
+    Item activate(int id, String email);
+
+    // HU46
+    List<Item> listReceivedByUser(String email);
 }
