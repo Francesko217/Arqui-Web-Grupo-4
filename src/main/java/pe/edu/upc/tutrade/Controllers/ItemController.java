@@ -73,4 +73,30 @@ public class ItemController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // HU15: pausar ítem (status 1 → 2)
+    @PutMapping("/{id}/pause")
+    public ResponseEntity<?> pausar(@PathVariable int id, Principal principal) {
+        try {
+            return ResponseEntity.ok(itemServiceImpl.listIdAsDTO(iS.pause(id, principal.getName()).getIdItem()).orElseThrow());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // HU15: activar ítem (status 2 → 1)
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<?> activar(@PathVariable int id, Principal principal) {
+        try {
+            return ResponseEntity.ok(itemServiceImpl.listIdAsDTO(iS.activate(id, principal.getName()).getIdItem()).orElseThrow());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // HU46: ítems recibidos por el usuario autenticado
+    @GetMapping("/received")
+    public ResponseEntity<?> listarRecibidos(Principal principal) {
+        return ResponseEntity.ok(itemServiceImpl.listReceivedAsDTO(principal.getName()));
+    }
 }
