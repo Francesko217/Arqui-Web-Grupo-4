@@ -3,6 +3,7 @@ package pe.edu.upc.tutrade.Controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.tutrade.DTOs.UserResponseDTO;
 import pe.edu.upc.tutrade.Entities.User;
@@ -71,5 +72,44 @@ public class UserController {
         } else {
             return ResponseEntity.status(404).body("Usuario no existe");
         }
+    }
+
+    // HU20: listar usuarios activos
+    @GetMapping("/active")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> listarActivos() {
+        return ResponseEntity.ok(uS.listActiveUsers());
+    }
+
+    // HU28: listar candidatos a deshabilitación
+    @GetMapping("/inactive")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> listarInactivos(@RequestParam(defaultValue = "90") int days) {
+        return ResponseEntity.ok(uS.listInactiveUsers(days));
+    }
+
+    // HU28: deshabilitar usuario (soft delete)
+    @PutMapping("/{id}/disable")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deshabilitar(@PathVariable int id) {
+        try {
+            uS.disableUser(id);
+            return ResponseEntity.ok("Usuario deshabilitado");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // HU38: buscar usuarios por username
+    @GetMapping("/search")
+    public ResponseEntity<?> buscar(@RequestParam String username) {
+        return ResponseEntity.ok(uS.searchByUsername(username));
+    }
+
+    // HU50: listar usuarios veteranos
+    @GetMapping("/veterans")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> listarVeteranos() {
+        return ResponseEntity.ok(uS.listVeteranUsers());
     }
 }
