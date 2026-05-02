@@ -14,6 +14,7 @@ public class UserResponseDTO {
     private LocalDate updated_atUser;
     private Role role;
     private ProfileResponseDTO profile;
+    private boolean veteran;
 
     public int getIdUser() { return idUser; }
     public void setIdUser(int idUser) { this.idUser = idUser; }
@@ -41,4 +42,7 @@ public class UserResponseDTO {
 
     public ProfileResponseDTO getProfile() { return profile; }
     public void setProfile(ProfileResponseDTO profile) { this.profile = profile; }
+
+    public boolean isVeteran() { return veteran; }
+    public void setVeteran(boolean veteran) { this.veteran = veteran; }
 }

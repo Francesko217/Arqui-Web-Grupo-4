@@ -173,4 +173,53 @@ public class ItemServiceImplement implements IItemService {
             return toDTO(item, profileMap);
         });
     }
+
+    @Override
+    public Item pause(int id, String email) {
+        Item item = iR.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+        User requester = uR.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        boolean isAdmin = requester.getRole() != null &&
+                requester.getRole().getNameRole().equalsIgnoreCase("ADMIN");
+        if (!isAdmin && item.getUser().getIdUser() != requester.getIdUser()) {
+            throw new RuntimeException("No tienes permiso para pausar este item");
+        }
+        if (item.getStatusItem() != 1) {
+            throw new RuntimeException("Solo se pueden pausar ítems disponibles (status=1)");
+        }
+        item.setStatusItem(2);
+        return iR.save(item);
+    }
+
+    @Override
+    public Item activate(int id, String email) {
+        Item item = iR.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+        User requester = uR.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        boolean isAdmin = requester.getRole() != null &&
+                requester.getRole().getNameRole().equalsIgnoreCase("ADMIN");
+        if (!isAdmin && item.getUser().getIdUser() != requester.getIdUser()) {
+            throw new RuntimeException("No tienes permiso para activar este item");
+        }
+        if (item.getStatusItem() != 2) {
+            throw new RuntimeException("Solo se pueden activar ítems pausados (status=2)");
+        }
+        item.setStatusItem(1);
+        return iR.save(item);
+    }
+
+    @Override
+    public List<Item> listReceivedByUser(String email) {
+        User user = uR.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return iR.findItemsReceivedByUser(user.getIdUser());
+    }
+
+    public List<ItemResponseDTO> listReceivedAsDTO(String email) {
+        return toDTOList(listReceivedByUser(email));
+    }
 }
