@@ -278,4 +278,42 @@ public class TradeServiceImplement implements ITradeService {
 
         return toDTO(trade);
     }
+
+    @Override
+    public List<TradeResponseDTO> listSentTrades(String email) {
+        User user = userRepo.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return tradeRepo.findByProposer_IdUser(user.getIdUser()).stream()
+                .map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TradeResponseDTO> listReceivedTrades(String email) {
+        User user = userRepo.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return tradeRepo.findByReceiver_IdUser(user.getIdUser()).stream()
+                .map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TradeResponseDTO> listByItem(int itemId, String email) {
+        User requester = userRepo.findByEmailUser(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Item item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+
+        boolean isAdmin = requester.getRole() != null &&
+                requester.getRole().getNameRole().equalsIgnoreCase("ADMIN");
+        if (!isAdmin && item.getUser().getIdUser() != requester.getIdUser()) {
+            throw new RuntimeException("No tienes permiso para ver las propuestas de este ítem");
+        }
+
+        return tradeRepo.findByItemId(itemId).stream()
+                .map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Object[]> rankingByTradeCount() {
+        return tradeRepo.findUsersRankedByTradeCount();
+    }
 }
