@@ -20,6 +20,7 @@ import pe.edu.upc.tutrade.Repositories.IMeetingPointRepository;
 import pe.edu.upc.tutrade.Repositories.ITradeItemRepository;
 import pe.edu.upc.tutrade.Repositories.ITradeRepository;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
+import pe.edu.upc.tutrade.Config.UserMapper;
 import pe.edu.upc.tutrade.ServicesInterfaces.ITradeService;
 
 import java.time.LocalDate;
@@ -50,6 +51,15 @@ public class TradeServiceImplement implements ITradeService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    private ItemResponseDTO toItemDTO(pe.edu.upc.tutrade.Entities.Item item) {
+        ItemResponseDTO dto = modelMapper.map(item, ItemResponseDTO.class);
+        dto.setUser(userMapper.toDTO(item.getUser()));
+        return dto;
+    }
+
     private MeetingPointResponseDTO toMeetingPointDTO(MeetingPoint mp) {
         MeetingPointResponseDTO dto = new MeetingPointResponseDTO();
         dto.setIdMeetingPoint(mp.getIdMeetingPoint());
@@ -67,17 +77,17 @@ public class TradeServiceImplement implements ITradeService {
         dto.setStatusTrade(trade.getStatusTrade());
         dto.setCreated_atTrade(trade.getCreated_atTrade());
         dto.setCompleted_atTrade(trade.getCompleted_atTrade());
-        dto.setProposer(modelMapper.map(trade.getProposer(), UserResponseDTO.class));
-        dto.setReceiver(modelMapper.map(trade.getReceiver(), UserResponseDTO.class));
+        dto.setProposer(userMapper.toDTO(trade.getProposer()));
+        dto.setReceiver(userMapper.toDTO(trade.getReceiver()));
 
         List<Trade_item> tradeItems = tradeItemRepo.findByTrade_IdTrade(trade.getIdTrade());
         dto.setProposerItems(tradeItems.stream()
                 .filter(ti -> ti.getSideTradeItem() == 1)
-                .map(ti -> modelMapper.map(ti.getItem(), ItemResponseDTO.class))
+                .map(ti -> toItemDTO(ti.getItem()))
                 .collect(Collectors.toList()));
         dto.setReceiverItems(tradeItems.stream()
                 .filter(ti -> ti.getSideTradeItem() == 2)
-                .map(ti -> modelMapper.map(ti.getItem(), ItemResponseDTO.class))
+                .map(ti -> toItemDTO(ti.getItem()))
                 .collect(Collectors.toList()));
 
         meetingPointRepo.findByTrade_IdTrade(trade.getIdTrade())
@@ -107,6 +117,12 @@ public class TradeServiceImplement implements ITradeService {
 
         if (!proposer.getIs_verifiedUser()) {
             throw new RuntimeException("Tu cuenta no está verificada. Contacta al administrador.");
+        }
+        if (!proposer.getIs_premiumUser()) {
+            long pendingTrades = tradeRepo.countPendingTradesByUser(proposer.getIdUser());
+            if (pendingTrades >= 3) {
+                throw new RuntimeException("Límite de 3 trades simultáneos alcanzado. Actualiza a premium para proponer más.");
+            }
         }
         if (proposer.getIdUser() == receiver.getIdUser()) {
             throw new RuntimeException("No puedes proponer un trueque contigo mismo");

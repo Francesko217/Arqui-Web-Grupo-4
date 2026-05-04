@@ -288,7 +288,8 @@ src/main/java/pe/edu/upc/tutrade/
 ├── Config/
 │   ├── DataInitializer.java       # Seed de roles y admin al arrancar
 │   ├── ModelMapperConfig.java
-│   └── OpenApiConfig.java         # Swagger UI + esquema de seguridad Bearer JWT
+│   ├── OpenApiConfig.java         # Swagger UI + esquema de seguridad Bearer JWT
+│   └── UserMapper.java            # Construcción centralizada de UserResponseDTO (veteran + profile)
 ├── Controllers/
 │   ├── AuthController.java
 │   ├── CategoryController.java
@@ -387,3 +388,28 @@ src/main/java/pe/edu/upc/tutrade/
 Los usuarios nuevos nacen con `is_verifiedUser = false` y no pueden proponer trades hasta ser verificados.
 
 El ADMIN los verifica manualmente desde `PUT /users/{id}/verify`. El campo `is_verifiedUser` aparece en el `UserResponseDTO` de todos los endpoints de usuario.
+
+---
+
+## Suscripción Premium
+
+El campo `is_premiumUser` controla el acceso a beneficios extendidos. El ADMIN activa o desactiva el premium con `PUT /users/{id}/premium` (toggle).
+
+Restricciones para usuarios sin premium:
+
+| Recurso | Límite |
+|---|---|
+| Ítems activos simultáneos (`statusItem = 1`) | 5 |
+| Trades en PENDING simultáneos (como proposer o receiver) | 3 |
+
+Los usuarios premium no tienen ninguno de estos límites.
+
+---
+
+## UserMapper — Datos consistentes en respuestas anidadas
+
+El componente `UserMapper` (`Config/UserMapper.java`) centraliza la construcción del `UserResponseDTO`. Calcula el flag `veteran` y embebe el `profile` correctamente en todos los contextos donde aparece un usuario:
+
+- `proposer` y `receiver` en trades
+- `user` dentro de los ítems del trade (`proposerItems`, `receiverItems`)
+- `user` dentro de los ítems en endpoints de ítems
