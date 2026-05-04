@@ -65,8 +65,15 @@ Al arrancar, `DataInitializer` siembra automáticamente (solo si la BD está vac
 ## Documentación interactiva (Swagger)
 
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/swagger-ui.html
 ```
+
+La UI incluye autenticación JWT integrada. Flujo para probar endpoints protegidos:
+
+1. Ejecutar `POST /auth/login` desde Swagger y copiar el `token` de la respuesta
+2. Hacer clic en el botón **Authorize** (candado, arriba a la derecha)
+3. Pegar el token en el campo `bearerAuth` (sin el prefijo `Bearer`)
+4. Confirmar con **Authorize** — todos los endpoints protegidos ya enviarán el header automáticamente
 
 ---
 
@@ -277,7 +284,8 @@ Category (jerarquía con parent_idCategory)
 src/main/java/pe/edu/upc/tutrade/
 ├── Config/
 │   ├── DataInitializer.java       # Seed de roles y admin al arrancar
-│   └── ModelMapperConfig.java
+│   ├── ModelMapperConfig.java
+│   └── OpenApiConfig.java         # Swagger UI + esquema de seguridad Bearer JWT
 ├── Controllers/
 │   ├── AuthController.java
 │   ├── CategoryController.java
@@ -360,6 +368,11 @@ src/main/java/pe/edu/upc/tutrade/
 
 ---
 
-## Pendiente
+## Deuda técnica conocida
 
-No hay features pendientes de implementar. Todas las entidades tienen su servicio y controlador completos.
+| Problema | Dónde ocurre |
+|---|---|
+| `veteran: false` incorrecto en respuestas anidadas | `proposer`/`receiver` en trades y `user` dentro de ítems — se calcula solo en `UserServiceImplement.toDTO()`, no en `TradeServiceImplement` ni `ItemServiceImplement` |
+| `profile: null` en respuestas anidadas | Mismo problema — los usuarios dentro de trades no tienen perfil embebido |
+
+**Fix pendiente:** crear un método `toUserDTO(User user)` compartido que calcule `veteran` y embeba el perfil, y usarlo en todos los services.
