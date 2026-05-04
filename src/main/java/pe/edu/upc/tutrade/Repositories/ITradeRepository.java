@@ -26,4 +26,8 @@ public interface ITradeRepository extends JpaRepository<Trade, Integer> {
     // HU16: usuarios ordenados por cantidad de trades (proposer + receiver)
     @Query("SELECT u, COUNT(t) as total FROM User u JOIN Trade t ON (t.proposer = u OR t.receiver = u) GROUP BY u ORDER BY total DESC")
     List<Object[]> findUsersRankedByTradeCount();
+
+    // Premium: contar trades PENDING donde el usuario participa (como proposer o receiver)
+    @Query("SELECT COUNT(t) FROM Trade t WHERE (t.proposer.idUser = :userId OR t.receiver.idUser = :userId) AND t.statusTrade = 'PENDING'")
+    long countPendingTradesByUser(@Param("userId") int userId);
 }

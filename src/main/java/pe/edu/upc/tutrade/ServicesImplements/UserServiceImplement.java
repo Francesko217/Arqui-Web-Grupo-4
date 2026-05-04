@@ -146,4 +146,13 @@ public class UserServiceImplement implements IUserService {
         user.setUpdated_atUser(LocalDate.now());
         uR.save(user);
     }
+
+    @Override
+    public void togglePremium(int userId) {
+        User user = uR.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setIs_premiumUser(!user.getIs_premiumUser());
+        user.setUpdated_atUser(LocalDate.now());
+        uR.save(user);
+    }
 }

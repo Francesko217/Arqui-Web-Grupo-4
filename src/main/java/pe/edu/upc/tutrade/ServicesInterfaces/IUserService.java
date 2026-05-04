@@ -24,4 +24,6 @@ public interface IUserService {
     List<UserResponseDTO> listVeteranUsers();
     // KYC
     void verifyUser(int userId);
+    // Premium
+    void togglePremium(int userId);
 }
