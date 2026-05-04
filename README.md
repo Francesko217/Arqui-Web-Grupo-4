@@ -19,6 +19,17 @@ Plataforma de intercambio de artículos entre usuarios (trueques). API REST desa
 
 ---
 
+## Producción
+
+| | |
+|---|---|
+| **API** | `https://arqui-web-grupo-4-production.up.railway.app` |
+| **Swagger** | `https://arqui-web-grupo-4-production.up.railway.app/swagger-ui.html` |
+| **Plataforma** | Railway (Docker) |
+| **Base de datos** | Render PostgreSQL |
+
+---
+
 ## Requisitos previos
 
 - Java 17+
