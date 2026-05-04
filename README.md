@@ -107,6 +107,9 @@ El token expira en **24 horas**.
 | GET | `/users` | ADMIN | Listar todos |
 | GET | `/users/{id}` | Autenticado | Buscar por ID |
 | DELETE | `/users/{id}` | ADMIN | Eliminar usuario |
+| PUT | `/users/{id}/disable` | ADMIN | Deshabilitar usuario (soft delete) |
+| PUT | `/users/{id}/enable` | ADMIN | Habilitar usuario |
+| PUT | `/users/{id}/verify` | ADMIN | Verificar usuario (KYC) |
 
 ### Categorías
 
@@ -376,3 +379,11 @@ src/main/java/pe/edu/upc/tutrade/
 | `profile: null` en respuestas anidadas | Mismo problema — los usuarios dentro de trades no tienen perfil embebido |
 
 **Fix pendiente:** crear un método `toUserDTO(User user)` compartido que calcule `veteran` y embeba el perfil, y usarlo en todos los services.
+
+---
+
+## KYC — Verificación de usuarios
+
+Los usuarios nuevos nacen con `is_verifiedUser = false` y no pueden proponer trades hasta ser verificados.
+
+El ADMIN los verifica manualmente desde `PUT /users/{id}/verify`. El campo `is_verifiedUser` aparece en el `UserResponseDTO` de todos los endpoints de usuario.
