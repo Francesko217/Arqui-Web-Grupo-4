@@ -14,6 +14,7 @@ public class UserResponseDTO {
     private LocalDate updated_atUser;
     private Role role;
     private ProfileResponseDTO profile;
+    private Boolean is_enabledUser;
     private boolean veteran;
 
     public int getIdUser() { return idUser; }
@@ -42,6 +43,9 @@ public class UserResponseDTO {
 
     public ProfileResponseDTO getProfile() { return profile; }
     public void setProfile(ProfileResponseDTO profile) { this.profile = profile; }
+
+    public Boolean getIs_enabledUser() { return is_enabledUser; }
+    public void setIs_enabledUser(Boolean is_enabledUser) { this.is_enabledUser = is_enabledUser; }
 
     public boolean isVeteran() { return veteran; }
     public void setVeteran(boolean veteran) { this.veteran = veteran; }

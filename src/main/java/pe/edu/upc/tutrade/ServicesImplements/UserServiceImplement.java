@@ -46,6 +46,7 @@ public class UserServiceImplement implements IUserService {
         dto.setIs_verifiedUser(user.getIs_verifiedUser());
         dto.setCreated_atUser(user.getCreated_atUser());
         dto.setUpdated_atUser(user.getUpdated_atUser());
+        dto.setIs_enabledUser(user.getIs_enabledUser());
         dto.setRole(user.getRole());
         profileRepo.findByUser_IdUser(user.getIdUser())
                 .ifPresent(p -> dto.setProfile(ProfileServiceImplement.toDTO(p)));
@@ -110,6 +111,16 @@ public class UserServiceImplement implements IUserService {
         User user = uR.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         user.setIs_enabledUser(false);
+        user.setUpdated_atUser(LocalDate.now());
+        uR.save(user);
+    }
+
+    @Override
+    public void enableUser(int userId) {
+        User user = uR.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setIs_enabledUser(true);
+        user.setUpdated_atUser(LocalDate.now());
         uR.save(user);
     }
 
@@ -125,5 +136,14 @@ public class UserServiceImplement implements IUserService {
         return uR.findVeteranUsers().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void verifyUser(int userId) {
+        User user = uR.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setIs_verifiedUser(true);
+        user.setUpdated_atUser(LocalDate.now());
+        uR.save(user);
     }
 }

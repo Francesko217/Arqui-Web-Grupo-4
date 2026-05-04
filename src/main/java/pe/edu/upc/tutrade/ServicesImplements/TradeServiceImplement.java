@@ -105,6 +105,9 @@ public class TradeServiceImplement implements ITradeService {
         User receiver = userRepo.findById(dto.getReceiverId())
                 .orElseThrow(() -> new RuntimeException("Receptor no encontrado"));
 
+        if (!proposer.getIs_verifiedUser()) {
+            throw new RuntimeException("Tu cuenta no está verificada. Contacta al administrador.");
+        }
         if (proposer.getIdUser() == receiver.getIdUser()) {
             throw new RuntimeException("No puedes proponer un trueque contigo mismo");
         }

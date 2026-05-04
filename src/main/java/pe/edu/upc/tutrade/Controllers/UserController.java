@@ -94,7 +94,19 @@ public class UserController {
     public ResponseEntity<?> deshabilitar(@PathVariable int id) {
         try {
             uS.disableUser(id);
-            return ResponseEntity.ok("Usuario deshabilitado");
+            return ResponseEntity.ok(toDTO(uS.listId(id).get()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // HU28: habilitar usuario
+    @PutMapping("/{id}/enable")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> habilitar(@PathVariable int id) {
+        try {
+            uS.enableUser(id);
+            return ResponseEntity.ok(toDTO(uS.listId(id).get()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -111,5 +123,17 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> listarVeteranos() {
         return ResponseEntity.ok(uS.listVeteranUsers());
+    }
+
+    // KYC: verificar usuario
+    @PutMapping("/{id}/verify")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> verificar(@PathVariable int id) {
+        try {
+            uS.verifyUser(id);
+            return ResponseEntity.ok(toDTO(uS.listId(id).get()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

@@ -17,8 +17,11 @@ public interface IUserService {
     // HU28
     List<UserResponseDTO> listInactiveUsers(int inactiveDays);
     void disableUser(int userId);
+    void enableUser(int userId);
     // HU38
     List<UserResponseDTO> searchByUsername(String username);
     // HU50
     List<UserResponseDTO> listVeteranUsers();
+    // KYC
+    void verifyUser(int userId);
 }
