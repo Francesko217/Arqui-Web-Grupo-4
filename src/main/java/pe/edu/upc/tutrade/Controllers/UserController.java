@@ -125,6 +125,18 @@ public class UserController {
         return ResponseEntity.ok(uS.listVeteranUsers());
     }
 
+    // Premium: activar/desactivar suscripción premium
+    @PutMapping("/{id}/premium")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> togglePremium(@PathVariable int id) {
+        try {
+            uS.togglePremium(id);
+            return ResponseEntity.ok(toDTO(uS.listId(id).get()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // KYC: verificar usuario
     @PutMapping("/{id}/verify")
     @PreAuthorize("hasRole('ADMIN')")
