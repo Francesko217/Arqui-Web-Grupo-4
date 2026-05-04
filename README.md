@@ -372,17 +372,6 @@ src/main/java/pe/edu/upc/tutrade/
 
 ---
 
-## Deuda técnica conocida
-
-| Problema | Dónde ocurre |
-|---|---|
-| `veteran: false` incorrecto en respuestas anidadas | `proposer`/`receiver` en trades y `user` dentro de ítems — se calcula solo en `UserServiceImplement.toDTO()`, no en `TradeServiceImplement` ni `ItemServiceImplement` |
-| `profile: null` en respuestas anidadas | Mismo problema — los usuarios dentro de trades no tienen perfil embebido |
-
-**Fix pendiente:** crear un método `toUserDTO(User user)` compartido que calcule `veteran` y embeba el perfil, y usarlo en todos los services.
-
----
-
 ## KYC — Verificación de usuarios
 
 Los usuarios nuevos nacen con `is_verifiedUser = false` y no pueden proponer trades hasta ser verificados.
