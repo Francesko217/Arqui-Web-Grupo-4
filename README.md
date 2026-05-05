@@ -28,6 +28,24 @@ Plataforma de intercambio de artículos entre usuarios (trueques). API REST desa
 | **Plataforma** | Railway (Docker) |
 | **Base de datos** | Render PostgreSQL |
 
+Un solo miembro del equipo mantiene el deploy activo. Los demás desarrollan localmente.
+
+**Flujo para actualizar producción:**
+
+```
+1. Cambios se mergean a main en el repo original
+2. El responsable del deploy hace Sync fork en GitHub
+3. Railway detecta el cambio y redeploya automáticamente
+```
+
+**Para levantar localmente** (cualquier miembro del equipo):
+
+1. Clonar el repo original
+2. Crear la base de datos: `CREATE DATABASE "bdTuTrade";`
+3. Ejecutar: `mvn spring-boot:run`
+
+No se necesita Railway ni Docker para desarrollo local. Los defaults de `application.properties` apuntan a `localhost`.
+
 ---
 
 ## Requisitos previos
