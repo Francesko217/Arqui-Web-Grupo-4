@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -15,7 +16,11 @@ import org.springframework.context.annotation.Configuration;
                 version = "1.0",
                 description = "API REST para la plataforma de intercambio TuTrade"
         ),
-        security = @SecurityRequirement(name = "bearerAuth")
+        security = @SecurityRequirement(name = "bearerAuth"),
+        servers = {
+                @Server(url = "https://arqui-web-grupo-4-production.up.railway.app", description = "Producción"),
+                @Server(url = "http://localhost:8080", description = "Local")
+        }
 )
 @SecurityScheme(
         name = "bearerAuth",
