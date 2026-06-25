@@ -3,7 +3,6 @@
 Plataforma de intercambio de artículos entre usuarios (trueques). API REST desarrollada con Spring Boot y PostgreSQL.
 
 ---
-
 ## Stack
 
 | Tecnología | Versión |
