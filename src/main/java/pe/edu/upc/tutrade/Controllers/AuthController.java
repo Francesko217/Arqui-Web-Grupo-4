@@ -36,7 +36,11 @@ public class AuthController {
                         user.setLast_loginUser(LocalDateTime.now());
                         userRepository.save(user);
                     });
-            String token = jwtUtil.generateToken(auth.getName());
+            String role = auth.getAuthorities().stream()
+                    .findFirst()
+                    .map(a -> a.getAuthority().replace("ROLE_", ""))
+                    .orElse("CLIENT");
+            String token = jwtUtil.generateToken(auth.getName(), role);
             return ResponseEntity.ok(new LoginResponse(token));
         } catch (DisabledException e) {
             return ResponseEntity.status(403).body("Cuenta deshabilitada");
