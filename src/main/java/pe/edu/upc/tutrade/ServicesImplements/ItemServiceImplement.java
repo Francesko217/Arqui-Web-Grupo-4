@@ -155,6 +155,11 @@ public class ItemServiceImplement implements IItemService {
         return toDTOList(iR.findByUser_IdUser(userId));
     }
 
+    // HU03: búsqueda por texto
+    public List<ItemResponseDTO> searchAsDTO(String q) {
+        return toDTOList(iR.findByTitleItemContainingIgnoreCaseOrDescriptionItemContainingIgnoreCase(q, q));
+    }
+
     public Optional<ItemResponseDTO> listIdAsDTO(int id) {
         return iR.findById(id).map(this::toDTO);
     }

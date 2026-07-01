@@ -26,4 +26,6 @@ public interface IUserService {
     void verifyUser(int userId);
     // Premium
     void togglePremium(int userId);
+    // HU06: el propio usuario activa su suscripción premium
+    void subscribePremium(String email);
 }
