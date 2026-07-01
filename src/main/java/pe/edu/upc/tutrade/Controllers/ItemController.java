@@ -46,6 +46,12 @@ public class ItemController {
         return ResponseEntity.ok(itemServiceImpl.listByUserAsDTO(userId));
     }
 
+    // HU03: buscar items por texto (título o descripción)
+    @GetMapping("/search")
+    public ResponseEntity<?> buscar(@RequestParam String q) {
+        return ResponseEntity.ok(itemServiceImpl.searchAsDTO(q));
+    }
+
     @PostMapping
     public ResponseEntity<?> insertar(@RequestBody ItemRequestDTO dto, Principal principal) {
         try {

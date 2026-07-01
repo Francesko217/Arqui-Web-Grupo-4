@@ -11,6 +11,7 @@ import pe.edu.upc.tutrade.Repositories.IProfileRepository;
 import pe.edu.upc.tutrade.ServicesImplements.ProfileServiceImplement;
 import pe.edu.upc.tutrade.ServicesInterfaces.IUserService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -123,6 +124,17 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> listarVeteranos() {
         return ResponseEntity.ok(uS.listVeteranUsers());
+    }
+
+    // HU06: el usuario activa su propia suscripción premium (pago simulado en el front)
+    @PutMapping("/me/premium")
+    public ResponseEntity<?> activarMiPremium(Principal principal) {
+        try {
+            uS.subscribePremium(principal.getName());
+            return ResponseEntity.ok("Premium activado");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // Premium: activar/desactivar suscripción premium

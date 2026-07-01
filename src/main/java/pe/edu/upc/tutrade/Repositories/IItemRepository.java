@@ -18,4 +18,7 @@ public interface IItemRepository extends JpaRepository<Item, Integer> {
 
     // Premium: contar ítems activos (status=1) de un usuario
     long countByUser_IdUserAndStatusItem(int userId, int statusItem);
+
+    // HU03: búsqueda por texto en título o descripción
+    List<Item> findByTitleItemContainingIgnoreCaseOrDescriptionItemContainingIgnoreCase(String titulo, String descripcion);
 }
