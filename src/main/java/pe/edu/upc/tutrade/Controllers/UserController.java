@@ -74,11 +74,14 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable int id) {
         Optional<User> user = uS.listId(id);
-        if (user.isPresent()) {
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body("Usuario no existe");
+        }
+        try {
             uS.delete(id);
             return ResponseEntity.ok("Usuario eliminado");
-        } else {
-            return ResponseEntity.status(404).body("Usuario no existe");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("No se puede eliminar: el usuario tiene datos asociados (ítems, trueques, etc.). Usa deshabilitar en su lugar.");
         }
     }
 

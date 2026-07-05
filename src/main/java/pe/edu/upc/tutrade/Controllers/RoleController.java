@@ -59,11 +59,14 @@ public class RoleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable int id) {
         Optional<Role> role = rS.listId(id);
-        if (role.isPresent()) {
+        if (role.isEmpty()) {
+            return ResponseEntity.status(404).body("Rol no existe");
+        }
+        try {
             rS.delete(id);
             return ResponseEntity.ok("Rol eliminado");
-        } else {
-            return ResponseEntity.status(404).body("Rol no existe");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
