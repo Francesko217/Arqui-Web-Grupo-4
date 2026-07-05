@@ -14,6 +14,8 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByUsernameUserContainingIgnoreCase(String username);
 
+    long countByRole_IdRole(int idRole);
+
     // HU20: usuarios con al menos un ítem disponible (status=1) O un trade PENDING/ACCEPTED
     @Query("SELECT DISTINCT u FROM User u WHERE " +
            "(SELECT COUNT(i) FROM Item i WHERE i.user = u AND i.statusItem = 1) > 0 " +
