@@ -45,6 +45,12 @@ public class ReportServiceImplement implements IReportService {
         if (reporter.getIdUser() == reported.getIdUser()) {
             throw new RuntimeException("No puedes reportarte a ti mismo");
         }
+        if (dto.getReason() == null || dto.getReason().isBlank()) {
+            throw new RuntimeException("El motivo del reporte es obligatorio");
+        }
+        if (dto.getDescription() == null || dto.getDescription().isBlank()) {
+            throw new RuntimeException("La descripción del reporte es obligatoria");
+        }
 
         Report report = new Report();
         report.setReasonReport(dto.getReason());
