@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
         security = @SecurityRequirement(name = "bearerAuth"),
         servers = {
                 @Server(url = "https://arqui-web-grupo-4-production.up.railway.app", description = "Producción"),
-                @Server(url = "http://localhost:8080", description = "Local")
+                @Server(url = "http://localhost:8082", description = "Local")
         }
 )
 @SecurityScheme(
