@@ -12,6 +12,7 @@ import pe.edu.upc.tutrade.Repositories.ITradeRepository;
 import pe.edu.upc.tutrade.Repositories.IUserRepository;
 import pe.edu.upc.tutrade.ServicesInterfaces.IMeetingPointService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,24 @@ public class MeetingPointServiceImplement implements IMeetingPointService {
         return dto;
     }
 
+    private static void validateMeetingPointFields(MeetingPointRequestDTO dto) {
+        if (dto.getAddress() == null || dto.getAddress().isBlank()) {
+            throw new RuntimeException("La dirección del punto de encuentro es obligatoria");
+        }
+        if (dto.getLatitude() < -90 || dto.getLatitude() > 90) {
+            throw new RuntimeException("Latitud inválida (debe estar entre -90 y 90)");
+        }
+        if (dto.getLongitude() < -180 || dto.getLongitude() > 180) {
+            throw new RuntimeException("Longitud inválida (debe estar entre -180 y 180)");
+        }
+        if (dto.getScheduledAt() == null) {
+            throw new RuntimeException("La fecha y hora del encuentro son obligatorias");
+        }
+        if (dto.getScheduledAt().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("La fecha del encuentro no puede ser en el pasado");
+        }
+    }
+
     private void validateParticipant(Trade trade, User user) {
         boolean isProposer = trade.getProposer().getIdUser() == user.getIdUser();
         boolean isReceiver = trade.getReceiver().getIdUser() == user.getIdUser();
@@ -56,13 +75,15 @@ public class MeetingPointServiceImplement implements IMeetingPointService {
 
         validateParticipant(trade, caller);
 
-        if (!trade.getStatusTrade().equals("PENDING")) {
-            throw new RuntimeException("Solo se puede proponer un punto de encuentro en un trueque pendiente");
+        if (!trade.getStatusTrade().equals("PENDING") && !trade.getStatusTrade().equals("ACCEPTED")) {
+            throw new RuntimeException("Solo se puede proponer un punto de encuentro en un trueque pendiente o aceptado");
         }
 
         if (meetingPointRepo.existsByTrade_IdTrade(dto.getTradeId())) {
             throw new RuntimeException("Este trueque ya tiene un punto de encuentro. Usa PUT para modificarlo");
         }
+
+        validateMeetingPointFields(dto);
 
         MeetingPoint mp = new MeetingPoint();
         mp.setTrade(trade);
@@ -105,9 +126,11 @@ public class MeetingPointServiceImplement implements IMeetingPointService {
         Trade trade = mp.getTrade();
         validateParticipant(trade, caller);
 
-        if (!trade.getStatusTrade().equals("PENDING")) {
-            throw new RuntimeException("Solo se puede modificar el punto de encuentro de un trueque pendiente");
+        if (!trade.getStatusTrade().equals("PENDING") && !trade.getStatusTrade().equals("ACCEPTED")) {
+            throw new RuntimeException("Solo se puede modificar el punto de encuentro de un trueque pendiente o aceptado");
         }
+
+        validateMeetingPointFields(dto);
 
         mp.setAddressMeetingPoint(dto.getAddress());
         mp.setLatitudeMeetingPoint(dto.getLatitude());
