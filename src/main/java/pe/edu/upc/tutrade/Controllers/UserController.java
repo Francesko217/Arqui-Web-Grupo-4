@@ -54,6 +54,13 @@ public class UserController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> misDatos(Principal principal) {
+        return uS.listByEmail(principal.getName())
+                .<ResponseEntity<?>>map(u -> ResponseEntity.ok(toDTO(u)))
+                .orElse(ResponseEntity.status(404).body("Usuario no encontrado"));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> listarId(@PathVariable int id) {
         Optional<User> user = uS.listId(id);

@@ -10,6 +10,7 @@ public interface IUserService {
     User insert(User user);
     List<User> list();
     Optional<User> listId(int id);
+    Optional<User> listByEmail(String email);
     void delete(int id);
 
     // HU20

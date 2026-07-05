@@ -60,6 +60,15 @@ public class UserServiceImplement implements IUserService {
 
     @Override
     public User insert(User user) {
+        if (user.getEmailUser() == null || user.getEmailUser().isBlank() || !user.getEmailUser().contains("@")) {
+            throw new RuntimeException("Correo electrónico inválido");
+        }
+        if (user.getUsernameUser() == null || user.getUsernameUser().isBlank()) {
+            throw new RuntimeException("El nombre de usuario es obligatorio");
+        }
+        if (user.getPassword_hashUser() == null || user.getPassword_hashUser().length() < 4) {
+            throw new RuntimeException("La contraseña debe tener al menos 4 caracteres");
+        }
         if (uR.findByEmailUser(user.getEmailUser()).isPresent()) {
             throw new RuntimeException("Email ya registrado");
         }
@@ -84,6 +93,11 @@ public class UserServiceImplement implements IUserService {
     @Override
     public Optional<User> listId(int id) {
         return uR.findById(id);
+    }
+
+    @Override
+    public Optional<User> listByEmail(String email) {
+        return uR.findByEmailUser(email);
     }
 
     @Override
@@ -142,6 +156,12 @@ public class UserServiceImplement implements IUserService {
     public void verifyUser(int userId) {
         User user = uR.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (user.getIs_verifiedUser()) {
+            throw new RuntimeException("Este usuario ya está verificado");
+        }
+        if (!user.getIs_enabledUser()) {
+            throw new RuntimeException("No puedes verificar a un usuario deshabilitado. Habilítalo primero");
+        }
         user.setIs_verifiedUser(true);
         user.setUpdated_atUser(LocalDate.now());
         uR.save(user);
