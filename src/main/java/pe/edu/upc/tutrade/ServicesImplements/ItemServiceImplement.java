@@ -48,12 +48,28 @@ public class ItemServiceImplement implements IItemService {
                 .collect(Collectors.toList());
     }
 
+    private static void validateItemFields(ItemRequestDTO dto) {
+        if (dto.getTitleItem() == null || dto.getTitleItem().isBlank()) {
+            throw new RuntimeException("El título del ítem es obligatorio");
+        }
+        if (dto.getDescriptionItem() == null || dto.getDescriptionItem().isBlank()) {
+            throw new RuntimeException("La descripción del ítem es obligatoria");
+        }
+        if (dto.getConditionItem() < 1 || dto.getConditionItem() > 4) {
+            throw new RuntimeException("Condición inválida (debe ser 1=Nuevo, 2=Como nuevo, 3=Buen estado o 4=Usado)");
+        }
+    }
+
     @Override
     public Item insert(ItemRequestDTO dto, String email) {
         User owner = uR.findByEmailUser(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         Category category = cR.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        if (!owner.getIs_verifiedUser()) {
+            throw new RuntimeException("Tu cuenta no está verificada. Contacta al administrador.");
+        }
 
         if (!owner.getIs_premiumUser()) {
             long activeItems = iR.countByUser_IdUserAndStatusItem(owner.getIdUser(), 1);
@@ -62,11 +78,15 @@ public class ItemServiceImplement implements IItemService {
             }
         }
 
+        validateItemFields(dto);
+
         Item item = new Item();
         item.setTitleItem(dto.getTitleItem());
         item.setDescriptionItem(dto.getDescriptionItem());
         item.setConditionItem(dto.getConditionItem());
-        item.setStatusItem(dto.getStatusItem());
+        // Un ítem siempre nace Disponible (1): pausar/activar/marcar-intercambiado
+        // tienen sus propios endpoints con sus propias reglas de transición de estado.
+        item.setStatusItem(1);
         item.setUser(owner);
         item.setCategory(category);
         return iR.save(item);
@@ -114,10 +134,13 @@ public class ItemServiceImplement implements IItemService {
         Category category = cR.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
+        validateItemFields(dto);
+
         item.setTitleItem(dto.getTitleItem());
         item.setDescriptionItem(dto.getDescriptionItem());
         item.setConditionItem(dto.getConditionItem());
-        item.setStatusItem(dto.getStatusItem());
+        // El estado (disponible/pausado/intercambiado) NO se toca aquí: tiene sus
+        // propios endpoints (pause/activate) con sus propias reglas de transición.
         item.setCategory(category);
         return iR.save(item);
     }
