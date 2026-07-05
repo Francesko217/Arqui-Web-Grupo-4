@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/categories", "/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ratings/user/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/impact/community").permitAll()
+                .requestMatchers(HttpMethod.POST, "/chatbot").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
