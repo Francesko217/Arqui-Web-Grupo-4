@@ -38,6 +38,28 @@ public class ProfileServiceImplement implements IProfileService {
         return dto;
     }
 
+    private static void validateProfileFields(ProfileRequestDTO dto) {
+        if (dto.getFirstName() == null || dto.getFirstName().isBlank()) {
+            throw new RuntimeException("El nombre es obligatorio");
+        }
+        if (dto.getLastName() == null || dto.getLastName().isBlank()) {
+            throw new RuntimeException("El apellido es obligatorio");
+        }
+        if (dto.getBirthDate() == null) {
+            throw new RuntimeException("La fecha de nacimiento es obligatoria");
+        }
+        if (dto.getBirthDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("La fecha de nacimiento no puede ser en el futuro");
+        }
+        int edad = Period.between(dto.getBirthDate(), LocalDate.now()).getYears();
+        if (edad < 13) {
+            throw new RuntimeException("Debes tener al menos 13 años para crear un perfil");
+        }
+        if (edad > 120) {
+            throw new RuntimeException("Fecha de nacimiento inválida");
+        }
+    }
+
     @Override
     public ProfileResponseDTO create(ProfileRequestDTO dto, String email) {
         User user = userRepo.findByEmailUser(email)
@@ -46,6 +68,8 @@ public class ProfileServiceImplement implements IProfileService {
         if (profileRepo.findByUser_IdUser(user.getIdUser()).isPresent()) {
             throw new RuntimeException("Ya tienes un perfil creado");
         }
+
+        validateProfileFields(dto);
 
         Profile profile = new Profile();
         profile.setFirst_nameProfile(dto.getFirstName());
@@ -88,6 +112,8 @@ public class ProfileServiceImplement implements IProfileService {
         if (!isAdmin && profile.getUser().getIdUser() != requester.getIdUser()) {
             throw new RuntimeException("No tienes permiso para modificar este perfil");
         }
+
+        validateProfileFields(dto);
 
         profile.setFirst_nameProfile(dto.getFirstName());
         profile.setLast_nameProfile(dto.getLastName());
