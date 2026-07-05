@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.tutrade.DTOs.ItemRequestDTO;
+import pe.edu.upc.tutrade.Entities.Item;
 import pe.edu.upc.tutrade.ServicesImplements.ItemServiceImplement;
 import pe.edu.upc.tutrade.ServicesInterfaces.IItemService;
 
@@ -55,7 +56,8 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<?> insertar(@RequestBody ItemRequestDTO dto, Principal principal) {
         try {
-            return ResponseEntity.ok(iS.insert(dto, principal.getName()));
+            Item nuevo = iS.insert(dto, principal.getName());
+            return ResponseEntity.ok(itemServiceImpl.listIdAsDTO(nuevo.getIdItem()).orElseThrow());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -64,7 +66,8 @@ public class ItemController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable int id, @RequestBody ItemRequestDTO dto, Principal principal) {
         try {
-            return ResponseEntity.ok(iS.update(id, dto, principal.getName()));
+            Item actualizado = iS.update(id, dto, principal.getName());
+            return ResponseEntity.ok(itemServiceImpl.listIdAsDTO(actualizado.getIdItem()).orElseThrow());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
