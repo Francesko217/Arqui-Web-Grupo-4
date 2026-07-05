@@ -127,6 +127,12 @@ public class TradeServiceImplement implements ITradeService {
         if (proposer.getIdUser() == receiver.getIdUser()) {
             throw new RuntimeException("No puedes proponer un trueque contigo mismo");
         }
+        if (dto.getProposerItemIds() == null || dto.getProposerItemIds().isEmpty()) {
+            throw new RuntimeException("Debes ofrecer al menos un ítem tuyo");
+        }
+        if (dto.getReceiverItemIds() == null || dto.getReceiverItemIds().isEmpty()) {
+            throw new RuntimeException("Debes seleccionar al menos un ítem del receptor");
+        }
 
         List<Item> proposerItems = dto.getProposerItemIds().stream()
                 .map(id -> itemRepo.findById(id)
