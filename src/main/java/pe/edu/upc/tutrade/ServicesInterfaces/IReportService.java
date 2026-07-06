@@ -9,4 +9,5 @@ public interface IReportService {
     ReportResponseDTO create(ReportRequestDTO dto, String reporterEmail);
     List<ReportResponseDTO> listAll();
     List<ReportResponseDTO> listByReportedUser(int userId);
+    ReportResponseDTO updateStatus(int id, String status);
 }

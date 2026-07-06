@@ -8,6 +8,7 @@ import pe.edu.upc.tutrade.DTOs.ReportRequestDTO;
 import pe.edu.upc.tutrade.ServicesInterfaces.IReportService;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/reports")
@@ -35,5 +36,15 @@ public class ReportController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> porUsuario(@PathVariable int userId) {
         return ResponseEntity.ok(reportService.listByReportedUser(userId));
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> cambiarEstado(@PathVariable int id, @RequestBody Map<String, String> body) {
+        try {
+            return ResponseEntity.ok(reportService.updateStatus(id, body.get("status")));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

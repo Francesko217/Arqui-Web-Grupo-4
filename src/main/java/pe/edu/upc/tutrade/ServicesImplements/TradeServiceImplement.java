@@ -3,6 +3,7 @@ package pe.edu.upc.tutrade.ServicesImplements;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upc.tutrade.DTOs.ItemResponseDTO;
 import pe.edu.upc.tutrade.DTOs.MeetingPointResponseDTO;
 import pe.edu.upc.tutrade.DTOs.TradeRequestDTO;
@@ -109,6 +110,7 @@ public class TradeServiceImplement implements ITradeService {
     }
 
     @Override
+    @Transactional
     public TradeResponseDTO create(TradeRequestDTO dto, String email) {
         User proposer = userRepo.findByEmailUser(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -232,6 +234,7 @@ public class TradeServiceImplement implements ITradeService {
     }
 
     @Override
+    @Transactional
     public TradeResponseDTO accept(int id, String email) {
         Trade trade = tradeRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Trueque no encontrado"));

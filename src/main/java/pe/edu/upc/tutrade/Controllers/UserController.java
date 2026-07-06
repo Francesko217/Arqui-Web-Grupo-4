@@ -47,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> listar() {
         List<UserResponseDTO> lista = uS.list().stream()
                 .map(u -> modelMapper.map(u, UserResponseDTO.class))
@@ -72,6 +73,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminar(@PathVariable int id) {
         Optional<User> user = uS.listId(id);
         if (user.isEmpty()) {

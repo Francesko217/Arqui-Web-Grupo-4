@@ -76,4 +76,15 @@ public class ReportServiceImplement implements IReportService {
                 .map(ReportServiceImplement::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ReportResponseDTO updateStatus(int id, String status) {
+        Report report = reportRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
+        if (status == null || (!status.equals("PENDING") && !status.equals("REVIEWED") && !status.equals("RESOLVED"))) {
+            throw new RuntimeException("Estado inválido");
+        }
+        report.setStatusReport(status);
+        return toDTO(reportRepo.save(report));
+    }
 }

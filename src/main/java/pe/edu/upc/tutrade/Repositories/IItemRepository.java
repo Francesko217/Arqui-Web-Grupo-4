@@ -3,6 +3,7 @@ package pe.edu.upc.tutrade.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import pe.edu.upc.tutrade.DTOs.ConteoDTO;
 import pe.edu.upc.tutrade.Entities.Item;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface IItemRepository extends JpaRepository<Item, Integer> {
 
     // HU03: búsqueda por texto en título o descripción
     List<Item> findByTitleItemContainingIgnoreCaseOrDescriptionItemContainingIgnoreCase(String titulo, String descripcion);
+
+    // Estadisticas: cantidad de items por categoria
+    @Query("SELECT new pe.edu.upc.tutrade.DTOs.ConteoDTO(c.nameCategory, COUNT(i)) FROM Item i LEFT JOIN i.category c GROUP BY c.nameCategory ORDER BY COUNT(i) DESC")
+    List<ConteoDTO> contarPorCategoria();
 }

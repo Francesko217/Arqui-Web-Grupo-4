@@ -60,6 +60,7 @@ public class UserServiceImplement implements IUserService {
 
     @Override
     public User insert(User user) {
+        user.setIdUser(0); // que no manden un id para sobreescribir otra cuenta
         if (user.getEmailUser() == null || user.getEmailUser().isBlank() || !user.getEmailUser().contains("@")) {
             throw new RuntimeException("Correo electrónico inválido");
         }
