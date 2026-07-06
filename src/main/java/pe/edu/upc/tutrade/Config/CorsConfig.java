@@ -18,7 +18,8 @@ public class CorsConfig {
             "http://localhost:4200",
             "https://*.onrender.com",
             "https://*.vercel.app",
-            "https://*.netlify.app"
+            "https://*.netlify.app",
+            "https://*.pages.dev"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
