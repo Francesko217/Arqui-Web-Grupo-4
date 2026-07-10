@@ -21,8 +21,10 @@ public class ItemController {
     private ItemServiceImplement itemServiceImpl;
 
     @GetMapping
-    public ResponseEntity<?> listar() {
-        return ResponseEntity.ok(itemServiceImpl.listAsDTO());
+    public ResponseEntity<?> listar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(itemServiceImpl.listAsDTO(page, size));
     }
 
     @GetMapping("/{id}")

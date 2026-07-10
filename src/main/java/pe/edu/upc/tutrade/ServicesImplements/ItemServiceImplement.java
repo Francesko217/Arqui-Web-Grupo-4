@@ -2,6 +2,8 @@ package pe.edu.upc.tutrade.ServicesImplements;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.tutrade.DTOs.ItemResponseDTO;
 import pe.edu.upc.tutrade.DTOs.ItemRequestDTO;
@@ -162,8 +164,8 @@ public class ItemServiceImplement implements IItemService {
         iR.deleteById(id);
     }
 
-    public List<ItemResponseDTO> listAsDTO() {
-        return toDTOList(iR.findAll());
+    public Page<ItemResponseDTO> listAsDTO(int page, int size) {
+        return iR.findAll(PageRequest.of(page, size)).map(this::toDTO);
     }
 
     public List<ItemResponseDTO> listByCategoryAsDTO(int categoryId) {
